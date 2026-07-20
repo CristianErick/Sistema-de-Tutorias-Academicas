@@ -13,6 +13,7 @@ const authRoutes = require('./routes/authRoutes');
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const tutoriasRoutes = require('./routes/tutoriasRoutes');
 const reservasRoutes = require('./routes/reservasRoutes');
+const reportesRoutes = require('./routes/reportesRoutes');
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/tutorias', tutoriasRoutes);
 app.use('/api/reservas', reservasRoutes);
+app.use('/api/reportes', reportesRoutes);
 
 app.use(errorHandler);
 

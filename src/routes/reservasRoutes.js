@@ -8,6 +8,7 @@ const {
   crearReserva,
   listarReservas,
   marcarAsistencia,
+  cancelarReserva,
 } = require('../controllers/reservasController');
 
 const router = Router();
@@ -15,5 +16,6 @@ const router = Router();
 router.get('/', verificarTokenJWT, asyncHandler(listarReservas));
 router.post('/nueva', verificarTokenJWT, validate(crearReservaSchema), asyncHandler(crearReserva));
 router.put('/:id/asistencia', verificarTokenJWT, validarRol('Docente', 'Admin'), validate(marcarAsistenciaSchema), asyncHandler(marcarAsistencia));
+router.put('/:id/cancelar', verificarTokenJWT, asyncHandler(cancelarReserva));
 
 module.exports = router;

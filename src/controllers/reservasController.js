@@ -161,4 +161,59 @@ async function marcarAsistencia(req, res) {
   return success(res, rows[0]);
 }
 
-module.exports = { crearReserva, listarReservas, marcarAsistencia };
+async function cancelarReserva(req, res) {
+  const { id } = req.params;
+
+  const { rows: reserva } = await pool.query(
+    `SELECT r.*, t.id_docente, t.id_tutoria FROM reservas r
+     JOIN tutorias t ON r.id_tutoria = t.id_tutoria
+     WHERE r.id_reserva = $1`,
+    [id]
+  );
+
+  if (reserva.length === 0) {
+    return error(res, 'Reserva no encontrada', 404);
+  }
+
+  if (
+    req.usuario.rol !== 'Admin' &&
+    reserva[0].id_estudiante !== req.usuario.id_usuario
+  ) {
+    return error(res, 'No puedes cancelar una reserva que no te pertenece', 403);
+  }
+
+  if (reserva[0].estado_asistencia !== 'Pendiente') {
+    return error(res, 'Solo se pueden cancelar reservas en estado Pendiente', 409);
+  }
+
+  const cliente = await pool.connect();
+  try {
+    await cliente.query('BEGIN');
+
+    await cliente.query(
+      `UPDATE reservas SET estado_asistencia = 'Falto' WHERE id_reserva = $1`,
+      [id]
+    );
+
+    await cliente.query(
+      `UPDATE tutorias SET estado = 'Disponible' WHERE id_tutoria = $1`,
+      [reserva[0].id_tutoria]
+    );
+
+    await cliente.query('COMMIT');
+
+    notifyDocente(reserva[0].id_docente, 'reserva-cancelada', {
+      mensaje: `Un estudiante canceló su reserva`,
+      id_reserva: id,
+    });
+
+    return success(res, { mensaje: 'Reserva cancelada exitosamente' });
+  } catch (err) {
+    await cliente.query('ROLLBACK');
+    throw err;
+  } finally {
+    cliente.release();
+  }
+}
+
+module.exports = { crearReserva, listarReservas, marcarAsistencia, cancelarReserva };

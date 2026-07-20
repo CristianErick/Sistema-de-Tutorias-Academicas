@@ -71,6 +71,26 @@ const marcarAsistenciaSchema = Joi.object({
   }),
 });
 
+const olvideContrasenaSchema = Joi.object({
+  correo: Joi.string().email().required().messages({
+    'string.email': 'Correo inválido',
+    'any.required': 'El correo es obligatorio',
+  }),
+});
+
+const restablecerContrasenaSchema = Joi.object({
+  token: Joi.string().required().messages({ 'any.required': 'El token es obligatorio' }),
+  contrasena: Joi.string().min(6).required().messages({
+    'string.min': 'La contraseña debe tener al menos 6 caracteres',
+    'any.required': 'La nueva contraseña es obligatoria',
+  }),
+});
+
+const actualizarPerfilSchema = Joi.object({
+  nombre_completo: Joi.string().min(3).max(150),
+  contrasena: Joi.string().min(6),
+}).min(1).messages({ 'object.min': 'Debe enviar al menos nombre_completo o contrasena' });
+
 module.exports = {
   loginSchema,
   crearUsuarioSchema,
@@ -79,4 +99,7 @@ module.exports = {
   actualizarTutoriaSchema,
   crearReservaSchema,
   marcarAsistenciaSchema,
+  olvideContrasenaSchema,
+  restablecerContrasenaSchema,
+  actualizarPerfilSchema,
 };
