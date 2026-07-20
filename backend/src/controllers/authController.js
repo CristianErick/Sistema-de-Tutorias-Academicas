@@ -3,8 +3,21 @@ const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
 const { success, error } = require('../utils/response');
 
+const intentosFallidos = new Map();
+const MAX_INTENTOS = 5;
+const TIEMPO_BLOQUEO = 15 * 60 * 1000;
+
 async function login(req, res) {
   const { correo, contrasena } = req.body;
+
+  const bloqueo = intentosFallidos.get(correo);
+  if (bloqueo && bloqueo.count >= MAX_INTENTOS) {
+    if (Date.now() - bloqueo.time < TIEMPO_BLOQUEO) {
+      const restante = Math.ceil((TIEMPO_BLOQUEO - (Date.now() - bloqueo.time)) / 60000);
+      return error(res, `Cuenta bloqueada. Intente de nuevo en ${restante} minuto(s).`, 429);
+    }
+    intentosFallidos.delete(correo);
+  }
 
   const { rows } = await pool.query(
     'SELECT id_usuario, nombre_completo, correo, contrasena, rol FROM usuarios WHERE correo = $1',
@@ -19,8 +32,14 @@ async function login(req, res) {
   const coincide = await bcrypt.compare(contrasena, usuario.contrasena);
 
   if (!coincide) {
+    const prev = intentosFallidos.get(correo) || { count: 0, time: Date.now() };
+    prev.count += 1;
+    prev.time = Date.now();
+    intentosFallidos.set(correo, prev);
     return error(res, 'Credenciales inválidas', 401);
   }
+
+  intentosFallidos.delete(correo);
 
   const payload = {
     id_usuario: usuario.id_usuario,

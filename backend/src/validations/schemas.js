@@ -1,12 +1,14 @@
 const Joi = require('joi');
 
+const contrasenaPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/~`]).{8,}$/;
+const contrasenaMsg = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial';
+
 const loginSchema = Joi.object({
   correo: Joi.string().email().required().messages({
     'string.email': 'Correo inválido',
     'any.required': 'El correo es obligatorio',
   }),
-  contrasena: Joi.string().min(6).required().messages({
-    'string.min': 'La contraseña debe tener al menos 6 caracteres',
+  contrasena: Joi.string().required().messages({
     'any.required': 'La contraseña es obligatoria',
   }),
 });
@@ -20,8 +22,8 @@ const crearUsuarioSchema = Joi.object({
     'string.email': 'Correo inválido',
     'any.required': 'El correo es obligatorio',
   }),
-  contrasena: Joi.string().min(6).required().messages({
-    'string.min': 'La contraseña debe tener al menos 6 caracteres',
+  contrasena: Joi.string().pattern(contrasenaPattern).required().messages({
+    'string.pattern.base': contrasenaMsg,
     'any.required': 'La contraseña es obligatoria',
   }),
   rol: Joi.string().valid('Estudiante', 'Docente', 'Admin').required().messages({
@@ -33,7 +35,9 @@ const crearUsuarioSchema = Joi.object({
 const actualizarUsuarioSchema = Joi.object({
   nombre_completo: Joi.string().min(3).max(150),
   correo: Joi.string().email(),
-  contrasena: Joi.string().min(6),
+  contrasena: Joi.string().pattern(contrasenaPattern).messages({
+    'string.pattern.base': contrasenaMsg,
+  }),
   rol: Joi.string().valid('Estudiante', 'Docente', 'Admin'),
 }).min(1).messages({ 'object.min': 'Debe enviar al menos un campo para actualizar' });
 
@@ -59,8 +63,8 @@ const crearReservaSchema = Joi.object({
   id_tutoria: Joi.number().integer().required().messages({
     'any.required': 'id_tutoria es obligatorio',
   }),
-  id_estudiante: Joi.number().integer().required().messages({
-    'any.required': 'id_estudiante es obligatorio',
+  id_usuario: Joi.number().integer().required().messages({
+    'any.required': 'id_usuario es obligatorio',
   }),
 });
 
@@ -80,15 +84,17 @@ const olvideContrasenaSchema = Joi.object({
 
 const restablecerContrasenaSchema = Joi.object({
   token: Joi.string().required().messages({ 'any.required': 'El token es obligatorio' }),
-  contrasena: Joi.string().min(6).required().messages({
-    'string.min': 'La contraseña debe tener al menos 6 caracteres',
+  contrasena: Joi.string().pattern(contrasenaPattern).required().messages({
+    'string.pattern.base': contrasenaMsg,
     'any.required': 'La nueva contraseña es obligatoria',
   }),
 });
 
 const actualizarPerfilSchema = Joi.object({
   nombre_completo: Joi.string().min(3).max(150),
-  contrasena: Joi.string().min(6),
+  contrasena: Joi.string().pattern(contrasenaPattern).messages({
+    'string.pattern.base': contrasenaMsg,
+  }),
 }).min(1).messages({ 'object.min': 'Debe enviar al menos nombre_completo o contrasena' });
 
 module.exports = {

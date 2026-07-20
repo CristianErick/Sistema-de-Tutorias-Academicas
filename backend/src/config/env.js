@@ -11,7 +11,9 @@ const schema = Joi.object({
   }),
   PORT: Joi.number().port().default(3000),
   NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
-  CORS_ORIGIN: Joi.string().default('*'),
+  CORS_ORIGIN: Joi.string().default('*').messages({
+    'string.base': 'CORS_ORIGIN debe ser una lista de orígenes separados por coma o *',
+  }),
   LOG_LEVEL: Joi.string().valid('error', 'warn', 'info', 'debug').default('info'),
 }).unknown(true);
 
@@ -21,6 +23,10 @@ if (err) {
   const messages = err.details.map(d => d.message).join('\n');
   console.error('❌ Error de configuración:\n' + messages);
   process.exit(1);
+}
+
+for (const key of Object.keys(vars)) {
+  process.env[key] = String(vars[key]);
 }
 
 module.exports = vars;

@@ -4,39 +4,83 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tutorías Académicas</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="icon" href="/logo.png">
   <link rel="stylesheet" href="/css/styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 </head>
 <body>
   <div id="toast-container"></div>
 
   <div id="app">
-    <header id="header" class="hidden">
-      <div class="header-left">
-        <h1>Tutorías</h1>
-        <nav>
-          <button data-view="dashboard">Dashboard</button>
-          <button data-view="tutorias">Tutorías</button>
-          <button data-view="reservas">Mis Reservas</button>
-          <button data-view="usuarios" id="btnUsuarios" class="hidden">Usuarios</button>
-        </nav>
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-brand">
+        <img src="/logo.png" alt="Logo">
+        <span>Tutorías</span>
       </div>
-      <div class="header-right">
-        <span id="headerUser"></span>
-        <span id="headerBadge" class="header-badge"></span>
-        <button data-view="perfil" class="icon-btn" title="Perfil">⚙️</button>
-        <button id="btnLogout" class="icon-btn danger" title="Cerrar sesión">✕</button>
+      <nav class="sidebar-nav">
+        <button data-view="dashboard">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>
+          <span class="nav-text">Dashboard</span>
+        </button>
+        <button data-view="tutorias">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+          <span class="nav-text">Tutorías</span>
+        </button>
+        <button data-view="reservas">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+          <span class="nav-text">Mis Reservas</span>
+        </button>
+        <button data-view="usuarios" id="btnUsuarios" class="hidden">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="nav-text">Usuarios</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button data-view="perfil">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="nav-text">Mi Perfil</span>
+        </button>
+        <button id="btnLogoutSidebar">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+          <span class="nav-text">Cerrar Sesión</span>
+        </button>
       </div>
-    </header>
+      <button id="sidebarToggle" title="Colapsar sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+    </aside>
 
-    <main id="main">
-      <!-- LOGIN -->
+    <!-- Sidebar backdrop for mobile -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- MAIN -->
+    <div id="main">
+      <!-- HEADER -->
+      <header id="header" class="hidden">
+        <div class="header-left">
+          <button id="hamburger" title="Menú">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1>Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <span id="headerUser"></span>
+          <span id="headerBadge" class="header-badge"></span>
+          <button id="btnTheme" class="icon-btn" title="Cambiar tema">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <button id="btnLogout" class="icon-btn danger" title="Cerrar sesión">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- LOGIN (outside content-area for fullscreen) -->
       <section id="view-login">
         <div class="login-container">
           <div class="login-box">
             <div class="login-header">
-              <span class="logo">📚</span>
+              <span class="logo"><img src="/logo.png" alt="Logo" class="logo-img"></span>
               <h2>Tutorías Académicas</h2>
               <p>Sistema de Gestión</p>
             </div>
@@ -75,79 +119,127 @@
         </div>
       </section>
 
-      <!-- DASHBOARD -->
-      <section id="view-dashboard" class="view hidden">
-        <div class="view-header"><h2>Dashboard</h2></div>
-        <div id="statsGrid" class="stats-grid"></div>
-        <div class="card">
-          <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--text-light)">Tutorías más reservadas</h3>
-          <div id="topTutorias"></div>
-        </div>
-      </section>
-
-      <!-- TUTORIAS -->
-      <section id="view-tutorias" class="view hidden">
-        <div class="view-header">
-          <h2>Tutorías Disponibles</h2>
-          <button id="btnCrearTutoria" class="btn primary hidden">+ Nueva Tutoría</button>
-        </div>
-        <div id="tutoriasList" class="card-list"></div>
-      </section>
-
-      <!-- RESERVAS -->
-      <section id="view-reservas" class="view hidden">
-        <div class="view-header"><h2>Mis Reservas</h2></div>
-        <div id="reservasList" class="card-list"></div>
-      </section>
-
-      <!-- USUARIOS -->
-      <section id="view-usuarios" class="view hidden">
-        <div class="view-header"><h2>Gestión de Usuarios</h2></div>
-        <div class="card" style="margin-bottom:1rem">
-          <form id="formUsuario" class="form-grid">
-            <input type="text" id="usrNombre" placeholder="Nombre completo" required>
-            <input type="email" id="usrCorreo" placeholder="Correo" required>
-            <input type="password" id="usrContrasena" placeholder="Contraseña">
-            <select id="usrRol">
-              <option value="Estudiante">Estudiante</option>
-              <option value="Docente">Docente</option>
-              <option value="Admin">Admin</option>
-            </select>
-            <button type="submit" class="btn primary">Guardar</button>
-            <button type="button" id="btnCancelarUsuario" class="btn secondary hidden">Cancelar</button>
-            <input type="hidden" id="usrId">
-          </form>
-        </div>
-        <div class="table-wrapper">
-          <table id="usuariosTable">
-            <thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Acciones</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- PERFIL -->
-      <section id="view-perfil" class="view hidden">
-        <div class="card profile-card">
-          <div class="profile-avatar">👤</div>
-          <h2>Mi Perfil</h2>
-          <div id="perfilInfo" class="profile-info"></div>
-          <form id="formPerfil">
-            <h3>Editar perfil</h3>
-            <div class="input-group">
-              <label>Nombre completo</label>
-              <input type="text" id="perfilNombre" placeholder="Tu nombre">
+      <!-- CONTENT -->
+      <div class="content-area">
+        <!-- DASHBOARD -->
+        <section id="view-dashboard" class="view hidden">
+          <div class="view-header"><h2>Dashboard</h2></div>
+          <div id="statsGrid" class="stats-grid"></div>
+          <div class="quick-actions">
+            <h3>Acciones rápidas</h3>
+            <div class="quick-actions-grid">
+              <button class="quick-action-btn" id="qaNuevaTutoria">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+                <span class="qa-label">Nueva Tutoría</span>
+              </button>
+              <button class="quick-action-btn" id="qaVerTutorias">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+                <span class="qa-label">Ver Tutorías</span>
+              </button>
+              <button class="quick-action-btn" id="qaMisReservas">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+                <span class="qa-label">Mis Reservas</span>
+              </button>
+              <button class="quick-action-btn" id="qaPerfil">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <span class="qa-label">Mi Perfil</span>
+              </button>
             </div>
-            <div class="input-group">
-              <label>Nueva contraseña</label>
-              <input type="password" id="perfilContrasena" placeholder="Dejar vacío para no cambiar">
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:1rem;font-size:0.95rem;color:var(--text-secondary)">Tutorías más reservadas</h3>
+            <div id="topTutorias"></div>
+          </div>
+        </section>
+
+        <!-- TUTORIAS -->
+        <section id="view-tutorias" class="view hidden">
+          <div class="view-header">
+            <h2>Tutorías Disponibles</h2>
+            <button id="btnCrearTutoria" class="btn primary hidden">+ Nueva Tutoría</button>
+          </div>
+          <div class="table-controls">
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="searchTutorias" placeholder="Buscar tutoría...">
             </div>
-            <button type="submit" class="btn primary" style="width:100%">Guardar cambios</button>
-            <p id="perfilError" class="error-msg"></p>
-          </form>
-        </div>
-      </section>
-    </main>
+            <button class="btn-export" onclick="window.open('/api/reportes/exportar?tipo=tutorias&token='+API.getToken(),'_blank')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              CSV
+            </button>
+          </div>
+          <div id="tutoriasList" class="card-list"></div>
+          <div id="paginationTutorias" class="pagination hidden"></div>
+        </section>
+
+        <!-- RESERVAS -->
+        <section id="view-reservas" class="view hidden">
+          <div class="view-header"><h2>Mis Reservas</h2></div>
+          <div id="reservasList" class="card-list"></div>
+        </section>
+
+        <!-- USUARIOS -->
+        <section id="view-usuarios" class="view hidden">
+          <div class="view-header"><h2>Gestión de Usuarios</h2></div>
+          <div class="card" style="margin-bottom:1rem">
+            <form id="formUsuario" class="form-grid">
+              <input type="text" id="usrNombre" placeholder="Nombre completo" required>
+              <input type="email" id="usrCorreo" placeholder="Correo" required>
+              <input type="password" id="usrContrasena" placeholder="Contraseña">
+              <select id="usrRol">
+                <option value="Estudiante">Estudiante</option>
+                <option value="Docente">Docente</option>
+                <option value="Admin">Admin</option>
+              </select>
+              <button type="submit" class="btn primary">Guardar</button>
+              <button type="button" id="btnCancelarUsuario" class="btn secondary hidden">Cancelar</button>
+              <input type="hidden" id="usrId">
+            </form>
+          </div>
+          <div class="table-controls">
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="searchUsuarios" placeholder="Buscar usuario...">
+            </div>
+            <button class="btn-export" onclick="window.open('/api/reportes/exportar?tipo=usuarios&token='+API.getToken(),'_blank')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              CSV
+            </button>
+          </div>
+          <div class="table-wrapper">
+            <table id="usuariosTable">
+              <thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Acciones</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div id="paginationUsuarios" class="pagination hidden"></div>
+        </section>
+
+        <!-- PERFIL -->
+        <section id="view-perfil" class="view hidden">
+          <div class="card profile-card">
+            <div class="profile-avatar">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h2>Mi Perfil</h2>
+            <div id="perfilInfo" class="profile-info"></div>
+            <form id="formPerfil">
+              <h3>Editar perfil</h3>
+              <div class="input-group">
+                <label>Nombre completo</label>
+                <input type="text" id="perfilNombre" placeholder="Tu nombre">
+              </div>
+              <div class="input-group">
+                <label>Nueva contraseña</label>
+                <input type="password" id="perfilContrasena" placeholder="Dejar vacío para no cambiar">
+              </div>
+              <button type="submit" class="btn primary" style="width:100%">Guardar cambios</button>
+              <p id="perfilError" class="error-msg"></p>
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL TUTORIA -->
@@ -155,7 +247,9 @@
     <div class="modal">
       <div class="modal-header">
         <h3 id="modalTitle">Nueva Tutoría</h3>
-        <button id="modalClose" class="icon-btn">✕</button>
+        <button id="modalClose" class="icon-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <form id="formTutoria" class="modal-body">
         <div class="input-group">

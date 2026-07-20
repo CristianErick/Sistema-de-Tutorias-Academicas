@@ -40,10 +40,10 @@ describe('POST /api/auth/login', () => {
     expect(res.status).toBe(400);
   });
 
-  it('returns 400 for short password', async () => {
+  it('returns 400 for empty email', async () => {
     const res = await request(app)
       .post('/api/auth/login')
-      .send({ correo: 'test@test.com', contrasena: '123' });
+      .send({ correo: '', contrasena: 'Password123!' });
 
     expect(res.status).toBe(400);
   });
@@ -82,18 +82,18 @@ describe('POST /api/tutorias without token', () => {
 describe('Utils - asyncHandler', () => {
   const asyncHandler = require('../src/utils/asyncHandler');
 
-  it('catches errors and sends 500', async () => {
+  it('catches errors and calls next', async () => {
     const fn = async () => { throw new Error('test error'); };
     const wrapped = asyncHandler(fn);
 
-    const req = {};
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const req = { method: 'GET', originalUrl: '/test' };
+    const res = {};
     const next = jest.fn();
 
     await wrapped(req, res, next);
 
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, error: 'Error interno del servidor' });
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
+    expect(next.mock.calls[0][0].message).toBe('test error');
   });
 
   it('passes through successful handler', async () => {

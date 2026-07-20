@@ -6,10 +6,12 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const errorHandler = require('./middlewares/errorHandler');
+const sanitizeInput = require('./middlewares/sanitize');
 const runSetup = require('./db/setup');
 const logger = require('./utils/logger');
 const wsHandler = require('./websocket/handler');
@@ -21,10 +23,21 @@ const reportesRoutes = require('./routes/reportesRoutes');
 
 const app = express();
 
-app.use(helmet());
-app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
+app.use(compression());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: false,
+}));
+
+const corsOrigins = process.env.CORS_ORIGIN === '*'
+  ? '*'
+  : process.env.CORS_ORIGIN.split(',').map(s => s.trim());
+app.use(cors({ origin: corsOrigins }));
+
 app.use(morgan('dev'));
 app.use(express.json({ limit: '1mb' }));
+app.use(sanitizeInput);
+
 const frontendPath = path.resolve(__dirname, '..', '..', 'frontend');
 app.use(express.static(frontendPath, {
   setHeaders(res, filePath) {
@@ -34,20 +47,38 @@ app.use(express.static(frontendPath, {
   },
 }));
 
-const limiter = rateLimit({
+const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'Demasiadas peticiones. Intente de nuevo en 15 minutos.' },
 });
-app.use('/api', limiter);
+app.use('/api', globalLimiter);
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Demasiados intentos de inicio de sesión. Intente de nuevo en 15 minutos.' },
+});
+app.use('/api/auth/login', authLimiter);
 
 app.get('/health', async (_req, res) => {
   try {
     const pool = require('./config/database');
-    await pool.query('SELECT 1');
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    const db = await pool.query('SELECT 1');
+    const pkg = require('../package.json');
+    res.json({
+      status: 'ok',
+      version: pkg.version,
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      memory: process.memoryUsage(),
+      database: db.rows[0] ? 'connected' : 'disconnected',
+    });
   } catch {
     res.status(503).json({ status: 'error', message: 'Database unavailable' });
   }

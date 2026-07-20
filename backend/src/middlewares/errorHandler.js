@@ -9,7 +9,10 @@ function errorHandler(err, req, res, _next) {
   }
 
   if (err.code === '23505') {
-    return error(res, 'El valor ya existe (registro duplicado)', 409);
+    const campo = err.constraint
+      ? err.constraint.replace(/.*_(\w+)_key/, '$1')
+      : 'campo';
+    return error(res, `El ${campo} ya está registrado`, 409);
   }
 
   if (err.code === '23503') {

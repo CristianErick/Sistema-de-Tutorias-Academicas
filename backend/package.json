@@ -8,8 +8,14 @@
     "dev": "nodemon src/app.js",
     "test": "jest --forceExit --detectOpenHandles"
   },
+  "jest": {
+    "setupFiles": ["<rootDir>/tests/setup-env.js"],
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/tests"]
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^16.4.7",
     "express": "^4.21.0",

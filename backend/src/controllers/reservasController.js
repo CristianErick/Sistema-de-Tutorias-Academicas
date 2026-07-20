@@ -4,7 +4,7 @@ const { paginate, paginatedResult } = require('../utils/pagination');
 const { notifyDocente, notifyEstudiante } = require('../websocket/handler');
 
 async function crearReserva(req, res) {
-  const { id_tutoria, id_estudiante } = req.body;
+  const { id_tutoria, id_usuario: id_estudiante } = req.body;
 
   const cliente = await pool.connect();
 
