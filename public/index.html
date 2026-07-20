@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutorías Académicas</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div id="toast-container"></div>
+
+  <div id="app">
+    <header id="header" class="hidden">
+      <div class="header-left">
+        <h1>Tutorías</h1>
+        <nav>
+          <button data-view="tutorias">Tutorías</button>
+          <button data-view="reservas">Mis Reservas</button>
+          <button data-view="usuarios" id="btnUsuarios" class="hidden">Usuarios</button>
+        </nav>
+      </div>
+      <div class="header-right">
+        <span id="headerUser"></span>
+        <button data-view="perfil" class="icon-btn" title="Perfil">👤</button>
+        <button id="btnLogout" class="icon-btn danger" title="Cerrar sesión">✕</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section id="view-login">
+        <div class="login-container">
+          <div class="login-box">
+            <div class="login-header">
+              <div class="logo">📚</div>
+              <h2>Tutorías Académicas</h2>
+              <p>Sistema de Gestión</p>
+            </div>
+            <form id="formLogin">
+              <div class="input-group">
+                <label>Correo electrónico</label>
+                <input type="email" id="loginCorreo" placeholder="ejemplo@correo.com" required>
+              </div>
+              <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" id="loginContrasena" placeholder="••••••••" required>
+              </div>
+              <button type="submit" id="btnLogin">Ingresar</button>
+              <p id="loginError" class="error-msg"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-tutorias" class="view hidden">
+        <div class="view-header">
+          <h2>Tutorías Disponibles</h2>
+          <button id="btnCrearTutoria" class="btn primary hidden">+ Nueva Tutoría</button>
+        </div>
+        <div id="tutoriasList" class="card-list"></div>
+      </section>
+
+      <section id="view-reservas" class="view hidden">
+        <div class="view-header">
+          <h2>Mis Reservas</h2>
+        </div>
+        <div id="reservasList" class="card-list"></div>
+      </section>
+
+      <section id="view-usuarios" class="view hidden">
+        <div class="view-header">
+          <h2>Gestión de Usuarios</h2>
+        </div>
+        <div class="card">
+          <form id="formUsuario" class="form-grid">
+            <input type="text" id="usrNombre" placeholder="Nombre completo" required>
+            <input type="email" id="usrCorreo" placeholder="Correo" required>
+            <input type="password" id="usrContrasena" placeholder="Contraseña">
+            <select id="usrRol">
+              <option value="Estudiante">Estudiante</option>
+              <option value="Docente">Docente</option>
+              <option value="Admin">Admin</option>
+            </select>
+            <button type="submit" class="btn primary">Guardar</button>
+            <button type="button" id="btnCancelarUsuario" class="btn secondary hidden">Cancelar</button>
+            <input type="hidden" id="usrId">
+          </form>
+        </div>
+        <div class="table-wrapper">
+          <table id="usuariosTable">
+            <thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Acciones</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-perfil" class="view hidden">
+        <div class="card profile-card">
+          <div class="profile-avatar">👤</div>
+          <h2>Mi Perfil</h2>
+          <div id="perfilInfo" class="profile-info"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal-overlay" class="hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Nueva Tutoría</h3>
+        <button id="modalClose" class="icon-btn">✕</button>
+      </div>
+      <form id="formTutoria" class="modal-body">
+        <div class="input-group">
+          <label>Tema</label>
+          <input type="text" id="tutTema" placeholder="Ej: Álgebra Lineal" required>
+        </div>
+        <div class="input-group">
+          <label>Fecha y hora</label>
+          <input type="datetime-local" id="tutFecha" required>
+        </div>
+        <input type="hidden" id="tutId">
+        <button type="submit" class="btn primary">Guardar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
