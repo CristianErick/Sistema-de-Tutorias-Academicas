@@ -3,8 +3,8 @@ services:
     name: tutorias-api
     env: node
     region: ohio
-    buildCommand: npm ci --only=production
-    startCommand: node src/app.js
+    buildCommand: cd backend && npm ci --only=production
+    startCommand: node backend/src/app.js
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL

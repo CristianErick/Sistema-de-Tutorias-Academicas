@@ -2,10 +2,11 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY backend/package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
-COPY . .
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
 
 EXPOSE 3000
 
@@ -14,4 +15,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 USER node
 
-CMD ["node", "src/app.js"]
+CMD ["node", "backend/src/app.js"]

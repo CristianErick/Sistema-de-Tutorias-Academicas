@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tutorías Académicas</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 </head>
 <body>
   <div id="toast-container"></div>
@@ -14,6 +16,7 @@
       <div class="header-left">
         <h1>Tutorías</h1>
         <nav>
+          <button data-view="dashboard">Dashboard</button>
           <button data-view="tutorias">Tutorías</button>
           <button data-view="reservas">Mis Reservas</button>
           <button data-view="usuarios" id="btnUsuarios" class="hidden">Usuarios</button>
@@ -21,36 +24,68 @@
       </div>
       <div class="header-right">
         <span id="headerUser"></span>
-        <button data-view="perfil" class="icon-btn" title="Perfil">👤</button>
+        <span id="headerBadge" class="header-badge"></span>
+        <button data-view="perfil" class="icon-btn" title="Perfil">⚙️</button>
         <button id="btnLogout" class="icon-btn danger" title="Cerrar sesión">✕</button>
       </div>
     </header>
 
     <main id="main">
+      <!-- LOGIN -->
       <section id="view-login">
         <div class="login-container">
           <div class="login-box">
             <div class="login-header">
-              <div class="logo">📚</div>
+              <span class="logo">📚</span>
               <h2>Tutorías Académicas</h2>
               <p>Sistema de Gestión</p>
             </div>
+
             <form id="formLogin">
               <div class="input-group">
                 <label>Correo electrónico</label>
-                <input type="email" id="loginCorreo" placeholder="ejemplo@correo.com" required>
+                <input type="email" id="loginCorreo" placeholder="ejemplo@correo.com" required autocomplete="email">
               </div>
               <div class="input-group">
                 <label>Contraseña</label>
-                <input type="password" id="loginContrasena" placeholder="••••••••" required>
+                <input type="password" id="loginContrasena" placeholder="••••••••" required autocomplete="current-password">
               </div>
               <button type="submit" id="btnLogin">Ingresar</button>
               <p id="loginError" class="error-msg"></p>
             </form>
+
+            <div style="text-align:center;margin-top:1rem">
+              <button id="btnForgotPassword" class="link-btn">¿Olvidaste tu contraseña?</button>
+            </div>
+
+            <div id="forgotPasswordSection" class="hidden">
+              <hr style="margin:1rem 0;border-color:var(--border)">
+              <form id="formForgotPassword">
+                <div class="input-group">
+                  <label>Ingresa tu correo</label>
+                  <input type="email" id="forgotCorreo" placeholder="correo@ejemplo.com" required>
+                </div>
+                <button type="submit" class="btn primary" style="width:100%">Enviar enlace</button>
+                <p id="forgotError" class="error-msg"></p>
+                <p id="forgotSuccess" style="color:var(--success);font-size:0.85rem;text-align:center;margin-top:0.5rem" class="hidden"></p>
+              </form>
+              <button id="btnBackToLogin" class="link-btn" style="display:block;margin:0.75rem auto 0">Volver a iniciar sesión</button>
+            </div>
           </div>
         </div>
       </section>
 
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="view hidden">
+        <div class="view-header"><h2>Dashboard</h2></div>
+        <div id="statsGrid" class="stats-grid"></div>
+        <div class="card">
+          <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--text-light)">Tutorías más reservadas</h3>
+          <div id="topTutorias"></div>
+        </div>
+      </section>
+
+      <!-- TUTORIAS -->
       <section id="view-tutorias" class="view hidden">
         <div class="view-header">
           <h2>Tutorías Disponibles</h2>
@@ -59,18 +94,16 @@
         <div id="tutoriasList" class="card-list"></div>
       </section>
 
+      <!-- RESERVAS -->
       <section id="view-reservas" class="view hidden">
-        <div class="view-header">
-          <h2>Mis Reservas</h2>
-        </div>
+        <div class="view-header"><h2>Mis Reservas</h2></div>
         <div id="reservasList" class="card-list"></div>
       </section>
 
+      <!-- USUARIOS -->
       <section id="view-usuarios" class="view hidden">
-        <div class="view-header">
-          <h2>Gestión de Usuarios</h2>
-        </div>
-        <div class="card">
+        <div class="view-header"><h2>Gestión de Usuarios</h2></div>
+        <div class="card" style="margin-bottom:1rem">
           <form id="formUsuario" class="form-grid">
             <input type="text" id="usrNombre" placeholder="Nombre completo" required>
             <input type="email" id="usrCorreo" placeholder="Correo" required>
@@ -93,16 +126,31 @@
         </div>
       </section>
 
+      <!-- PERFIL -->
       <section id="view-perfil" class="view hidden">
         <div class="card profile-card">
           <div class="profile-avatar">👤</div>
           <h2>Mi Perfil</h2>
           <div id="perfilInfo" class="profile-info"></div>
+          <form id="formPerfil">
+            <h3>Editar perfil</h3>
+            <div class="input-group">
+              <label>Nombre completo</label>
+              <input type="text" id="perfilNombre" placeholder="Tu nombre">
+            </div>
+            <div class="input-group">
+              <label>Nueva contraseña</label>
+              <input type="password" id="perfilContrasena" placeholder="Dejar vacío para no cambiar">
+            </div>
+            <button type="submit" class="btn primary" style="width:100%">Guardar cambios</button>
+            <p id="perfilError" class="error-msg"></p>
+          </form>
         </div>
       </section>
     </main>
   </div>
 
+  <!-- MODAL TUTORIA -->
   <div id="modal-overlay" class="hidden">
     <div class="modal">
       <div class="modal-header">
@@ -124,7 +172,8 @@
     </div>
   </div>
 
-  <script src="/js/api.js"></script>
-  <script src="/js/app.js"></script>
+  <script src="/js/api.js?v=1"></script>
+  <script src="/js/ui.js?v=1"></script>
+  <script src="/js/app.js?v=1"></script>
 </body>
 </html>

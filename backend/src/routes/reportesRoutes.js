@@ -6,7 +6,7 @@ const { resumen, tutoriasMasReservadas, tutoriasPorDocente } = require('../contr
 
 const router = Router();
 
-router.use(verificarTokenJWT, validarRol('Admin'));
+router.use(verificarTokenJWT);
 
 router.get('/resumen', asyncHandler(resumen));
 router.get('/tutorias', asyncHandler(tutoriasMasReservadas));

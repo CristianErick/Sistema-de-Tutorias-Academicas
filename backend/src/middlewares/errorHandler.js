@@ -1,7 +1,8 @@
+const logger = require('../utils/logger');
 const { error } = require('../utils/response');
 
 function errorHandler(err, req, res, _next) {
-  console.error(`[ERROR] ${req.method} ${req.originalUrl}:`, err);
+  logger.error(`${req.method} ${req.originalUrl}`, err);
 
   if (err.type === 'entity.parse.failed') {
     return error(res, 'JSON inválido en el cuerpo de la petición', 400);
