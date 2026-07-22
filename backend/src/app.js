@@ -22,6 +22,8 @@ const reservasRoutes = require('./routes/reservasRoutes');
 const reportesRoutes = require('./routes/reportesRoutes');
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(compression());
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
