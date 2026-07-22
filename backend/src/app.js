@@ -111,7 +111,11 @@ if (process.env.VERCEL !== '1') {
     });
   })();
 } else {
-  runSetup();
+  runSetup().catch(err => logger.error('Setup error:', err));
 }
+
+process.on('unhandledRejection', (err) => {
+  logger.error('Unhandled rejection:', err);
+});
 
 module.exports = app;

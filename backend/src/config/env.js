@@ -22,7 +22,7 @@ const { error: err, value: vars } = schema.validate(process.env, { abortEarly: f
 if (err) {
   const messages = err.details.map(d => d.message).join('\n');
   console.error('❌ Error de configuración:\n' + messages);
-  process.exit(1);
+  if (process.env.VERCEL !== '1') process.exit(1);
 }
 
 for (const key of Object.keys(vars)) {
