@@ -113,7 +113,12 @@ if (process.env.VERCEL !== '1') {
     });
   })();
 } else {
-  runSetup().catch(err => logger.error('Setup error:', err));
+  const setupPromise = runSetup().catch(err => logger.error('Setup error:', err));
+  // Espera a que setup termine antes de procesar requests
+  app.use(async (_req, _res, next) => {
+    await setupPromise;
+    next();
+  });
 }
 
 process.on('unhandledRejection', (err) => {
