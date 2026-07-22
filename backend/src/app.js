@@ -110,6 +110,8 @@ if (process.env.VERCEL !== '1') {
       logger.info(`Entorno: ${process.env.NODE_ENV || 'development'}`);
     });
   })();
+} else {
+  runSetup();
 }
 
 module.exports = app;
