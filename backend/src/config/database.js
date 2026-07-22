@@ -3,14 +3,14 @@ const logger = require('../utils/logger');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 5,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  max: 3,
+  idleTimeoutMillis: 5000,
+  connectionTimeoutMillis: 20000,
+  ssl: { rejectUnauthorized: false },
 });
 
 pool.on('error', (err) => {
-  logger.error('Error inesperado en el pool de PostgreSQL', err);
-  process.exit(-1);
+  logger.error('Error en pool PostgreSQL:', err.message);
 });
 
 module.exports = pool;
