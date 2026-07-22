@@ -1,13 +1,13 @@
 const Joi = require('joi');
 
 const schema = Joi.object({
-  DATABASE_URL: Joi.string().uri().required().messages({
+  DATABASE_URL: Joi.string().pattern(/^postgres(ql)?:\/\/.+/).required().messages({
     'any.required': 'DATABASE_URL es obligatoria',
-    'string.uri': 'DATABASE_URL debe ser una URI válida',
+    'string.pattern.base': 'DATABASE_URL debe ser una URI postgresql:// válida',
   }),
-  JWT_SECRET: Joi.string().min(16).required().messages({
+  JWT_SECRET: Joi.string().min(10).required().messages({
     'any.required': 'JWT_SECRET es obligatorio',
-    'string.min': 'JWT_SECRET debe tener al menos 16 caracteres',
+    'string.min': 'JWT_SECRET debe tener al menos 10 caracteres',
   }),
   PORT: Joi.number().port().default(3000),
   NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
