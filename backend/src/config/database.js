@@ -7,6 +7,7 @@ const pool = new Pool({
   idleTimeoutMillis: 5000,
   connectionTimeoutMillis: 20000,
   ssl: { rejectUnauthorized: false },
+  family: 4,
 });
 
 pool.on('error', (err) => {
