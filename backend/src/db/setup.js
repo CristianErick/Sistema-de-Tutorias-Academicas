@@ -30,6 +30,17 @@ async function runSetup() {
 
       const sql = fs.readFileSync(path.join(__dirname, 'init.sql'), 'utf8');
       await client.query(sql);
+
+      const bcrypt = require('bcrypt');
+      const hash = await bcrypt.hash('admin123', 10);
+      await client.query(
+        `INSERT INTO usuarios (nombre_completo, correo, contrasena, rol)
+         VALUES ('Administrador', 'admin@tutorias.com', $1, 'Admin')
+         ON CONFLICT (correo) DO NOTHING`,
+        [hash]
+      );
+      logger.info('Usuario admin creado (admin@tutorias.com / admin123)');
+
       logger.info('BD inicializada con exito');
       await client.end();
       return;
