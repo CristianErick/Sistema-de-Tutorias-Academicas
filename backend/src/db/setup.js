@@ -22,26 +22,27 @@ async function runSetup() {
         `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'usuarios') AS existe`
       );
 
-      if (rows[0].existe) {
+      if (!rows[0].existe) {
+        const sql = fs.readFileSync(path.join(__dirname, 'init.sql'), 'utf8');
+        await client.query(sql);
+        logger.info('Tablas creadas');
+      } else {
         logger.info('BD ya inicializada');
-        await client.end();
-        return;
       }
 
-      const sql = fs.readFileSync(path.join(__dirname, 'init.sql'), 'utf8');
-      await client.query(sql);
+      const { rows: userRows } = await client.query('SELECT COUNT(*) AS cnt FROM usuarios');
+      if (parseInt(userRows[0].cnt, 10) === 0) {
+        const bcrypt = require('bcrypt');
+        const hash = await bcrypt.hash('admin123', 10);
+        await client.query(
+          `INSERT INTO usuarios (nombre_completo, correo, contrasena, rol)
+           VALUES ('Administrador', 'admin@tutorias.com', $1, 'Admin')`,
+          [hash]
+        );
+        logger.info('Usuario admin creado: admin@tutorias.com / admin123');
+      }
 
-      const bcrypt = require('bcrypt');
-      const hash = await bcrypt.hash('admin123', 10);
-      await client.query(
-        `INSERT INTO usuarios (nombre_completo, correo, contrasena, rol)
-         VALUES ('Administrador', 'admin@tutorias.com', $1, 'Admin')
-         ON CONFLICT (correo) DO NOTHING`,
-        [hash]
-      );
-      logger.info('Usuario admin creado (admin@tutorias.com / admin123)');
-
-      logger.info('BD inicializada con exito');
+      logger.info('Setup completado');
       await client.end();
       return;
     } catch (err) {
