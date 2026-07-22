@@ -20,7 +20,6 @@ const usuariosRoutes = require('./routes/usuariosRoutes');
 const tutoriasRoutes = require('./routes/tutoriasRoutes');
 const reservasRoutes = require('./routes/reservasRoutes');
 const reportesRoutes = require('./routes/reportesRoutes');
-
 const app = express();
 
 app.use(compression());
@@ -102,11 +101,15 @@ wsHandler.setup(server);
 
 const PORT = process.env.PORT || 3000;
 
-(async () => {
-  await runSetup();
-  server.listen(PORT, () => {
-    logger.info(`Servidor corriendo en http://localhost:${PORT}`);
-    logger.info(`WebSocket en ws://localhost:${PORT}/ws`);
-    logger.info(`Entorno: ${process.env.NODE_ENV || 'development'}`);
-  });
-})();
+if (process.env.VERCEL !== '1') {
+  (async () => {
+    await runSetup();
+    server.listen(PORT, () => {
+      logger.info(`Servidor corriendo en http://localhost:${PORT}`);
+      logger.info(`WebSocket en ws://localhost:${PORT}/ws`);
+      logger.info(`Entorno: ${process.env.NODE_ENV || 'development'}`);
+    });
+  })();
+}
+
+module.exports = app;

@@ -1,0 +1,25 @@
+# Git
+.gitignore
+.gitattributes
+.vercel
+
+# Documentation
+*.md
+README*
+
+# Editor
+.idea
+.vscode
+*.sublime-*
+
+# Tests
+backend/tests
+backend/coverage
+
+# Local env
+.env
+*.local
+
+# CI
+.github
+.husky

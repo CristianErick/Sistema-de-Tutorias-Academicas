@@ -450,7 +450,9 @@ body {
 
 /* ========== LOGIN ========== */
 #view-login {
-  flex: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
   display: flex;
   align-items: center;
   justify-content: center;
