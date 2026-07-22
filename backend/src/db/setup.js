@@ -1,42 +1,45 @@
 const fs = require('fs');
 const path = require('path');
-const pool = require('../config/database');
+const { Client } = require('pg');
 const logger = require('../utils/logger');
 
-async function queryWithRetry(sql, retries = 3, delay = 2000) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await pool.query(sql);
-    } catch (err) {
-      if (i < retries - 1 && err.message?.includes('timeout')) {
-        logger.info(`Reintentando conexion a BD (${i + 1}/${retries})...`);
-        await new Promise(r => setTimeout(r, delay));
-      } else {
-        throw err;
-      }
-    }
-  }
-}
-
 async function runSetup() {
-  try {
-    const { rows } = await queryWithRetry(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables WHERE table_name = 'usuarios'
-      ) AS existe
-    `);
+  const dbUrl = process.env.DATABASE_URL || '';
+  const cleanUrl = dbUrl.replace(/&channel_binding=[^&]*/, '').replace(/\?channel_binding=[^&]*/, '');
 
-    if (rows[0].existe) {
-      logger.info('Base de datos ya inicializada, saltando setup');
+  for (let i = 0; i < 5; i++) {
+    let client;
+    try {
+      client = new Client({
+        connectionString: cleanUrl,
+        ssl: { rejectUnauthorized: false },
+        connectionTimeoutMillis: 30000,
+      });
+      await client.connect();
+      logger.info('Cliente conectado a BD');
+
+      const { rows } = await client.query(
+        `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'usuarios') AS existe`
+      );
+
+      if (rows[0].existe) {
+        logger.info('BD ya inicializada');
+        await client.end();
+        return;
+      }
+
+      const sql = fs.readFileSync(path.join(__dirname, 'init.sql'), 'utf8');
+      await client.query(sql);
+      logger.info('BD inicializada con exito');
+      await client.end();
       return;
+    } catch (err) {
+      logger.error(`Intento ${i + 1}/5 fallo: ${err.message}`);
+      if (client) await client.end().catch(() => {});
+      if (i < 4) await new Promise(r => setTimeout(r, 3000));
     }
-
-    const sql = fs.readFileSync(path.join(__dirname, 'init.sql'), 'utf8');
-    await pool.query(sql);
-    logger.info('Base de datos inicializada con éxito');
-  } catch (err) {
-    logger.error('Error al inicializar la base de datos', err.message);
   }
+  logger.error('No se pudo inicializar la BD tras 5 intentos');
 }
 
 module.exports = runSetup;
