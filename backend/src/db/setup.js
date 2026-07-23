@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
 const logger = require('../utils/logger');
+const bcrypt = require('bcrypt');
 
 async function runSetup() {
   const dbUrl = process.env.DATABASE_URL || '';
@@ -32,7 +33,6 @@ async function runSetup() {
 
       const { rows: userRows } = await client.query('SELECT COUNT(*) AS cnt FROM usuarios');
       if (parseInt(userRows[0].cnt, 10) === 0) {
-        const bcrypt = require('bcrypt');
         const hash = await bcrypt.hash('admin123', 10);
         await client.query(
           `INSERT INTO usuarios (nombre_completo, correo, contrasena, rol)

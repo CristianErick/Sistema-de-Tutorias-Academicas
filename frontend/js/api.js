@@ -48,7 +48,11 @@ const API = {
     if (token) opts.headers['Authorization'] = `Bearer ${token}`;
     if (body !== undefined) opts.body = JSON.stringify(body);
     const res = await fetch(`${this.BASE}${path}`, opts);
-    if (res.status === 401) { this._logout(); throw new Error('Sesión expirada'); }
+    if (res.status === 401) {
+      if (this.getToken()) { this._logout(); throw new Error('Sesión expirada'); }
+      const json = await res.json();
+      throw new Error(json.error || 'Credenciales inválidas');
+    }
     const json = await res.json();
     if (!json.success) throw new Error(json.error || 'Error del servidor');
     return json.data;

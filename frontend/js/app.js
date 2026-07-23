@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const paginated = filtradas.slice((tutoriaPage - 1) * TUTORIAS_PAGE_SIZE, tutoriaPage * TUTORIAS_PAGE_SIZE);
 
       if (paginated.length === 0) {
-        div.innerHTML = '<div class="empty-state"><div class="empty-icon">${UI.icons.books}</div><p>No hay tutorías disponibles.</p></div>';
+        div.innerHTML = `<div class="empty-state"><div class="empty-icon">${UI.icons.books}</div><p>No hay tutorías disponibles.</p></div>`;
         renderPaginacion('paginationTutorias', 0, 1, TUTORIAS_PAGE_SIZE, () => {});
         return;
       }
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const list = await API.getReservas();
       const user = API.getUser();
       if (list.length === 0) {
-        div.innerHTML = '<div class="empty-state"><div class="empty-icon">${UI.icons.clipboard}</div><p>No hay reservas.</p></div>';
+        div.innerHTML = `<div class="empty-state"><div class="empty-icon">${UI.icons.clipboard}</div><p>No hay reservas.</p></div>`;
         return;
       }
       div.innerHTML = list.map(r => `
