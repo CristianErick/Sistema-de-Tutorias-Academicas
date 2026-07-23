@@ -1,8 +1,12 @@
 let ws;
+let wsRetries = 0;
+const WS_MAX_RETRIES = 3;
 
 function conectarWebSocket() {
   const user = API.getUser();
   if (!user || ws?.readyState === WebSocket.OPEN) return;
+  if (wsRetries >= WS_MAX_RETRIES) return;
+  wsRetries++;
   const protocolo = location.protocol === 'https:' ? 'wss:' : 'ws:';
   ws = new WebSocket(`${protocolo}//${location.host}/ws?userId=${user.id_usuario}&rol=${user.rol}`);
   ws.onmessage = (e) => {
@@ -80,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       API.setToken(data.token);
       API.setUser(data.usuario);
       UI.toast(`Bienvenido, ${data.usuario.nombre_completo}`);
+      wsRetries = 0;
       conectarWebSocket();
       updateHeader();
       showView('dashboard');
